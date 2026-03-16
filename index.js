@@ -10,13 +10,15 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // very important to parse the data
 
 app.get("/", (req, res) => {
   res.json(`Server is running `);
 });
 
 app.post("/contact", async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, subject, message } = req.body;
+  console.log(req.body);
   try {
     const { data, error } = await resend.emails.send({
       from: "Portfolio Contact <contact@jayanshrestha.com>",
@@ -25,6 +27,7 @@ app.post("/contact", async (req, res) => {
       html: `
         <p><strong>Name: </strong> ${name}</p>
         <p><strong>Email: </strong> ${email}</p>
+        <p><strong>Subject: </strong> ${subject}</p>
         <p><strong>Message:</strong></p>
         <p>${message}</p>`,
     });
